@@ -1,0 +1,8 @@
+[17-Jul-2026 10:54:18 Asia/Kolkata] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'category' in 'field list' in D:\xampp\htdocs\tdcms\models\Assignment.php:79
+Stack trace:
+#0 D:\xampp\htdocs\tdcms\models\Assignment.php(79): PDO->prepare('INSERT INTO ass...')
+#1 D:\xampp\htdocs\tdcms\models\Assignment.php(57): Assignment->insertOne(3, 'Buy Sale Rental...', '', 'Buy sale rental...', 'https://maps.ap...', '', 1)
+#2 D:\xampp\htdocs\tdcms\controllers\admin_controller.php(182): Assignment->create(Array)
+#3 D:\xampp\htdocs\tdcms\index.php(43): handle_create_assignment(Object(PDO))
+#4 {main}
+  thrown in D:\xampp\htdocs\tdcms\models\Assignment.php on line 79

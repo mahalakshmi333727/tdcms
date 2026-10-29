@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TDCMS AJAX Debug Test</title>
+</head>
+<body>
+<h1>TDCMS AJAX Test</h1>
+<p>This page will test the AJAX endpoint directly</p>
+
+<div id="result"></div>
+
+<script>
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content || 'none';
+const APP_URL = 'http://localhost/tdcms';
+
+async function testAjax() {
+    const assignmentId = 4; // We know this exists from earlier
+    const resultDiv = document.getElementById('result');
+    
+    resultDiv.innerHTML = '<p>Testing AJAX endpoint...</p>';
+    
+    try {
+        console.log('Sending AJAX request with:');
+        console.log('- Assignment ID: ' + assignmentId);
+        console.log('- Event: copy_text');
+        console.log('- URL: ' + APP_URL + '/ajax/copy_text.php');
+        
+        const res = await fetch(APP_URL + '/ajax/copy_text.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': CSRF_TOKEN,
+            },
+            credentials: 'include',
+            body: new URLSearchParams({ 
+                assignment_id: assignmentId, 
+                event: 'copy_text',
+                csrf_token: CSRF_TOKEN
+            }),
+        });
+        
+        console.log('Response status:', res.status);
+        const data = await res.json();
+        console.log('Response data:', data);
+        
+        resultDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    } catch (error) {
+        console.error('Error:', error);
+        resultDiv.innerHTML = '<p style="color:red;">Error: ' + error.message + '</p>';
+    }
+}
+
+// Test on page load
+window.addEventListener('load', testAjax);
+</script>
+</body>
+</html>

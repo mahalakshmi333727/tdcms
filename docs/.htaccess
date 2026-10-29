@@ -1,0 +1,49 @@
+# =====================================================================
+# TDCMS — Apache Configuration
+# =====================================================================
+
+# This directory contains documentation and a bundled legacy source copy.
+# It must never be executed or served as a second application.
+Require all denied
+
+# ---------------------------------------------------------------------
+# Disable directory listing
+# ---------------------------------------------------------------------
+Options -Indexes
+
+# ---------------------------------------------------------------------
+# Protect sensitive folders and file types from direct HTTP access
+# ---------------------------------------------------------------------
+<FilesMatch "\.(sql|log|md|env|ini)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to internal application folders
+    RewriteRule ^(config|includes|models|controllers|middleware|layouts|views|helpers|logs|sql|database)/ - [F,L]
+
+    # Pretty-print not required; app uses ?page= / ?action= routing via index.php
+    # but if a request maps to a real file/dir, serve it directly (css/js/images).
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else goes through the front controller
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Security headers (defense in depth; also set in includes/bootstrap.php)
+# ---------------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Hide server signature
+# ---------------------------------------------------------------------
+ServerSignature Off

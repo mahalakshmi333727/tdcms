@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Welcome Message",
+    "category": "General",
+    "content": "Welcome to our company.",
+    "reference_link": "https://example.com",
+    "tags": ["welcome", "general"]
+  },
+  {
+    "title": "Product FAQ Response",
+    "category": "Support",
+    "content": "Thanks for reaching out! Here are answers to the most common questions about our product...",
+    "reference_link": "https://example.com/faq",
+    "tags": ["support", "faq"]
+  }
+]

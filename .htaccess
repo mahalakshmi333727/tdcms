@@ -1,0 +1,56 @@
+# =====================================================================
+# TDCMS — Apache Configuration
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# Disable directory listing
+# ---------------------------------------------------------------------
+Options -Indexes
+
+<IfModule mod_php.c>
+    php_value max_file_uploads 100
+    php_value upload_max_filesize 3M
+    php_value post_max_size 512M
+</IfModule>
+<IfModule php_module>
+    php_value max_file_uploads 100
+    php_value upload_max_filesize 3M
+    php_value post_max_size 512M
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Protect sensitive folders and file types from direct HTTP access
+# ---------------------------------------------------------------------
+<FilesMatch "\.(sql|log|md|env|ini)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to internal application folders
+    RewriteRule ^(config|includes|models|controllers|middleware|layouts|views|helpers|logs|sql|database|docs|bin)/ - [F,L]
+
+    # Pretty-print not required; app uses ?page= / ?action= routing via index.php
+    # but if a request maps to a real file/dir, serve it directly (css/js/images).
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else goes through the front controller
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Security headers (defense in depth; also set in includes/bootstrap.php)
+# ---------------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Hide server signature
+# ---------------------------------------------------------------------
+ServerSignature Off
